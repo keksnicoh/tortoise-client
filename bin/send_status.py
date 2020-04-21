@@ -10,14 +10,25 @@ import requests
 import getopt
 import sys
 
+import time
+import board
+import adafruit_dht
+
 
 def read_sensor(n):
+    dhtDevice = adafruit_dht.DHT22(board.D4)
     for i in range(n):
-        yield 1, 1
+        try:
+            yield dhtDevice.temperature, dhtDevice.humidity
+        except RuntimeError as error:
+          print(error.args[0])
+        
+        time.sleep(2.5)
 
 
 def send(api, temperature, humidity):
     """sends temperature and humidity via post request to turtle-service."""
+    print("send {}".format(api))
     requests.post(api, json={
         "temperature": temperature,
         "humidity": humidity
@@ -28,7 +39,8 @@ def read(n):
     """reads n temperature and humidity values and returns
     the mean value, if at least one read is not `None`."""
     tL, hL = [], []
-    for (t, h) in read_sensor(5):
+    for (t, h) in read_sensor(n):
+        print(t, h)
         if t is not None:
             tL.append(t)
         if h is not None:
@@ -51,9 +63,10 @@ def main():
 
     opts, args = getopt.getopt(sys.argv[1:], 'n:', ['api='])
     for opt, val in opts:
+        print(opt)
         if opt == "--api":
             api = val
-        if opt == "-n":
+        elif opt == "-n":
             nread = int(val)
         else:
             assert False, "unhandled option"
