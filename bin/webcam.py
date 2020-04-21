@@ -1,23 +1,50 @@
+#!/bin/python3
+
+"""webcam send
+
+todo:
+- use stream, do not persist to disk
+
+"""
 from picamera import PiCamera
-import time
 import requests
 import os
+import getopt
+import sys
 
-camera = PiCamera()
-#camera.start_preview()
-#time.sleep(0.1)
-camera.capture("webcam.jpg")
-#camera.stop_preview()
 
-requests.post(
-    "http://192.168.178.21:8081/v1/webcam",
-    files={
-        "foo": ("webcam.jpg", open("webcam.jpg", "rb"), "image/jpg")
-    },
-    #headers={
-    #    "Content-Type": "multipart/form-data", 
-    #    "Accept": "application/json"
-    #}
-)
+def capture(fname):
+    print("capturing ...")
+    camera = PiCamera()
+    camera.capture("webcam.jpg")
 
-os.remove("webcam.jpg")
+
+def send(api, stream):
+    requests.post(
+        api,
+        files={
+            "webcam": ("webcam.jpg", stream, "image/jpg")
+        }
+    )
+
+
+def main():
+    api = "http://localhost:8081/v1/webcam"
+
+    opts, args = getopt.getopt(sys.argv[1:], '', ['api='])
+    for opt, val in opts:
+        print(opt)
+        if opt == "--api":
+            api = val
+        else:
+            assert False, "unhandled option"
+
+    capture("webcam.jpg")
+    print("send {}".format(api))
+    send(api, open("webcam.jpg", "rb"))
+    os.remove("webcam.jpg")
+    exit(0)
+
+
+if __name__ == "__main__":
+    main()

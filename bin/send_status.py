@@ -22,13 +22,12 @@ def read_sensor(n):
             yield dhtDevice.temperature, dhtDevice.humidity
         except RuntimeError as error:
           print(error.args[0])
-        
+
         time.sleep(2.5)
 
 
 def send(api, temperature, humidity):
     """sends temperature and humidity via post request to turtle-service."""
-    print("send {}".format(api))
     requests.post(api, json={
         "temperature": temperature,
         "humidity": humidity
@@ -76,6 +75,7 @@ def main():
         exit(2)
 
     temperature, humidity = read(nread)
+    print("send {}".format(api))
     send(api, temperature=temperature, humidity=humidity)
     exit(0)
 
