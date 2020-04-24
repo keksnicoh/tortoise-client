@@ -15,13 +15,13 @@ import board
 import adafruit_dht
 
 
-def read_sensor(n):
-    dhtDevice = adafruit_dht.DHT22(board.D4)
+def read_sensor(n, device):
+    dhtDevice = adafruit_dht.DHT22(device)
     for i in range(n):
         try:
             yield dhtDevice.temperature, dhtDevice.humidity
         except RuntimeError as error:
-          print(error.args[0])
+            print(error.args[0])
 
         time.sleep(2.5)
 
@@ -34,11 +34,11 @@ def send(api, temperature, humidity):
     })
 
 
-def read(n):
+def read(n, device):
     """reads n temperature and humidity values and returns
     the mean value, if at least one read is not `None`."""
     tL, hL = [], []
-    for (t, h) in read_sensor(n):
+    for (t, h) in read_sensor(n, device):
         print(t, h)
         if t is not None:
             tL.append(t)
@@ -74,7 +74,7 @@ def main():
         print("arg -n: must be greater than zero")
         exit(2)
 
-    temperature, humidity = read(nread)
+    temperature, humidity = read(nread, device=board.D4)
     print("send {}".format(api))
     send(api, temperature=temperature, humidity=humidity)
     exit(0)
