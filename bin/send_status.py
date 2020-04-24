@@ -26,11 +26,14 @@ def read_sensor(n, device):
         time.sleep(2.5)
 
 
-def send(api, temperature, humidity):
+def send(api, temperature, humidity, temperature_outside, humidity_outside):
     """sends temperature and humidity via post request to turtle-service."""
+    print("send {}".format(api))
     requests.post(api, json={
         "temperature": temperature,
-        "humidity": humidity
+        "humidity": humidity,
+        "temperature_outside": temperature_outside,
+        "humidity_outside": humidity_outside
     })
 
 
@@ -39,7 +42,7 @@ def read(n, device):
     the mean value, if at least one read is not `None`."""
     tL, hL = [], []
     for (t, h) in read_sensor(n, device):
-        print(t, h)
+        print(device, t, h)
         if t is not None:
             tL.append(t)
         if h is not None:
@@ -75,8 +78,14 @@ def main():
         exit(2)
 
     temperature, humidity = read(nread, device=board.D4)
-    print("send {}".format(api))
-    send(api, temperature=temperature, humidity=humidity)
+    temperature_outside, humidity_outside = read(nread, device=board.D18)
+    send(
+        api,
+        temperature=temperature,
+        humidity=humidity,
+        temperature_outside=temperature_outside,
+        humidity_outside=humidity_outside
+    )
     exit(0)
 
 
