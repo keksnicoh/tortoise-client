@@ -77,8 +77,8 @@ def main():
         print("arg -n: must be greater than zero")
         exit(2)
 
-    temperature, humidity = read(nread, device=board.D4)
-    temperature_outside, humidity_outside = read(nread, device=board.D18)
+    temperature, humidity = read(nread, device=board.D18)
+    temperature_outside, humidity_outside = read(nread, device=board.D4)
     send(
         api,
         temperature=temperature,
