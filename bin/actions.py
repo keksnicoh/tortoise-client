@@ -7,7 +7,7 @@ logger = logging.getLogger('websockets.server')
 logger.setLevel(logging.ERROR)
 logger.addHandler(logging.StreamHandler())
 async def hello():
-    uri = "ws://192.168.178.21:8081/v1/stream"
+    uri = "ws://vps-ea1b2f2f.vps.ovh.net/wsapi/v1/stream"
 
     while True:
         try:

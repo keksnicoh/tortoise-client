@@ -7,6 +7,7 @@ sends sensor data to turle-servide status api.
 """
 
 import requests
+from requests.auth import HTTPBasicAuth
 import getopt
 import sys
 
@@ -26,10 +27,16 @@ def read_sensor(n, device):
         time.sleep(2.5)
 
 
-def send(api, temperature, humidity, temperature_outside, humidity_outside):
+def send(api, temperature, humidity, temperature_outside, humidity_outside, password=None):
     """sends temperature and humidity via post request to turtle-service."""
     print("send {}".format(api))
-    requests.post(api, json={
+
+    if password is not None:
+        http_auth = HTTPBasicAuth('pi', password)
+    else:
+        http_auth = None
+
+    requests.post(api, auth=http_auth, json={
         "temperature": temperature,
         "humidity": humidity,
         "temperature_outside": temperature_outside,
@@ -62,14 +69,17 @@ def read(n, device):
 def main():
     api = "http://localhost:8081/v1/status"
     nread = 5
+    password = None
 
-    opts, args = getopt.getopt(sys.argv[1:], 'n:', ['api='])
+    opts, args = getopt.getopt(sys.argv[1:], 'n:', ['api=', 'password='])
     for opt, val in opts:
         print(opt)
         if opt == "--api":
             api = val
         elif opt == "-n":
             nread = int(val)
+        elif opt == "--password":
+            password = val
         else:
             assert False, "unhandled option"
 
@@ -84,7 +94,8 @@ def main():
         temperature=temperature,
         humidity=humidity,
         temperature_outside=temperature_outside,
-        humidity_outside=humidity_outside
+        humidity_outside=humidity_outside,
+        password=password
     )
     exit(0)
 
