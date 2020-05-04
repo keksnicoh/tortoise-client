@@ -17,7 +17,7 @@ from requests.auth import HTTPBasicAuth
 def capture(fname):
     print("capturing ...")
     camera = PiCamera()
-    camera.capture("webcam.jpg")
+    camera.capture(fname)
 
 
 def send(api, stream, password=None):
@@ -50,10 +50,10 @@ def main():
         else:
             assert False, "unhandled option"
 
-    capture("webcam.jpg")
+    capture("/home/pi/tortoise-client/bin/webcam.jpg")
     print("send {}".format(api))
-    send(api, open("webcam.jpg", "rb"), password=password)
-    os.remove("webcam.jpg")
+    send(api, open("/home/pi/tortoise-client/bin/webcam.jpg", "rb"), password=password)
+    os.remove("/home/pi/tortoise-client/bin/webcam.jpg")
     exit(0)
 
 

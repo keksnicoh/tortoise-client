@@ -74,7 +74,7 @@ def worker(webcam_command):
             action_light(item['data'], 5)
         elif item['action'] == 'webcam':
             print('[webcam] ...')
-            subprocess.call(webcam_command)
+            subprocess.call(webcam_command.split(' '))
         else:
             print('[???] {}'.format(item))
 
