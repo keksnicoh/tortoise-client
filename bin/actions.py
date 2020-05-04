@@ -10,6 +10,7 @@ import time
 from threading import Thread
 from rpi_rf import RFDevice
 import queue
+import subprocess
 
 
 logger = logging.getLogger('websockets.server')
@@ -62,7 +63,7 @@ def tx_code(rfdevice, payload, key, c1, c2):
         rfdevice.tx_code(code, 1, 302, 24)
 
 
-def worker():
+def worker(webcam_command):
     while True:
         item = q.get()
         if item['action'] == 'light':
@@ -71,21 +72,27 @@ def worker():
         elif item['action'] == 'light_changed':
             print('[light_changed] ...')
             action_light(item['data'], 5)
+        elif item['action'] == 'webcam':
+            print('[webcam] ...')
+            subprocess.call(webcam_command)
         else:
             print('[???] {}'.format(item))
 
 
 def main():
     api = "ws://localhost:8081/v1/stream"
+    webcam_command = None
 
-    opts, args = getopt.getopt(sys.argv[1:], '', ['api='])
+    opts, args = getopt.getopt(sys.argv[1:], '', ['api=', 'webcam_command='])
     for opt, val in opts:
         if opt == "--api":
             api = val
+        elif opt == "--webcam_command":
+            webcam_command = val
         else:
             assert False, "unhandled option"
 
-    Thread(target=worker, daemon=True).start()
+    Thread(target=worker, daemon=True, args=(webcam_command, )).start()
     asyncio.get_event_loop().run_until_complete(client(api))
 
 
