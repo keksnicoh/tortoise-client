@@ -13,6 +13,7 @@ import getopt
 import sys
 from requests.auth import HTTPBasicAuth
 
+
 def capture(fname):
     print("capturing ...")
     camera = PiCamera()
@@ -23,7 +24,7 @@ def send(api, stream, password=None):
 
     if password is not None:
         auth = HTTPBasicAuth("pi", password)
-    else: 
+    else:
         auth = None
 
     requests.post(
