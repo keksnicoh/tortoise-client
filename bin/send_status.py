@@ -27,7 +27,14 @@ def read_sensor(n, device):
         time.sleep(2.5)
 
 
-def send(api, temperature, humidity, temperature_outside, humidity_outside, password=None):
+def send(
+    api,
+    temperature,
+    humidity,
+    temperature_outside,
+    humidity_outside,
+    password=None
+):
     """sends temperature and humidity via post request to turtle-service."""
     print("send {}".format(api))
 
