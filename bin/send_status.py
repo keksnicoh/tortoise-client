@@ -46,8 +46,8 @@ def send(
     requests.post(api, auth=http_auth, json={
         "temperature": temperature,
         "humidity": humidity,
-        "temperature_outside": temperature_outside,
-        "humidity_outside": humidity_outside
+        "temperatureOutside": temperature_outside,
+        "humidityOutside": humidity_outside
     })
 
 
