@@ -38,6 +38,7 @@ def send(api, stream, password=None):
 
 def main():
     api = "http://localhost:8081/v1/webcam"
+    basepath = "/home/pi/tortoise-client/bin"
     password = None
 
     opts, args = getopt.getopt(sys.argv[1:], '', ['api=', 'password='])
@@ -50,10 +51,12 @@ def main():
         else:
             assert False, "unhandled option"
 
-    capture("/home/pi/tortoise-client/bin/webcam.jpg")
+    filepath = os.path.join(basepath, "webcam.jpg")
+    capture(filepath)
     print("send {}".format(api))
-    send(api, open("/home/pi/tortoise-client/bin/webcam.jpg", "rb"), password=password)
-    os.remove("/home/pi/tortoise-client/bin/webcam.jpg")
+    rs = open(filepath, "rb")
+    send(api, rs, password=password)
+    os.remove(filepath)
     exit(0)
 
 
